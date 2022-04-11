@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 def readInBlackCometMeasurement(black_comet_file, data_dir = '', n_ignore = 2, delimiter = ' '):
     """
-    Read in a data file taken with the Black Comet spectograph.  
+    Read in a data file taken with the Black Comet spectograph.
     """
     read_in_data = can.readInColumnsToList(data_dir + black_comet_file, n_ignore = n_ignore, verbose = 0 )
     read_in_data = [[float(elem) for elem in col] for col in read_in_data]
@@ -81,17 +81,20 @@ if __name__ == "__main__":
         (whether you the user uses a KR1 or an HG2 Reference
         lamp, for example).
     """
-    MC_measurement_files = ['BC_mono_' + str(wave_len) + 'nm_exp10000ms.SSM' for wave_len in range(425, 426, 25)] + ['BC_mono_' + str(wave_len) + 'nm_exp1000ms.SSM' for wave_len in range(450, 476, 25)] + ['BC_mono_' + str(wave_len) + 'nm_exp200ms.SSM' for wave_len in range(500, 551, 25)] + ['BC_mono_' + str(wave_len) + 'nm_exp100ms.SSM' for wave_len in range(575, 626, 25)] + ['BC_mono_' + str(wave_len) + 'nm_exp50ms.SSM' for wave_len in range(650, 676, 25)] + ['BC_mono_' + str(wave_len) + 'nm_exp20ms.SSM' for wave_len in range(700, 726, 25)] + ['BC_mono_' + str(wave_len) + 'nm_exp10ms.SSM' for wave_len in range(750, 926, 25)] + ['BC_mono_' + str(wave_len) + 'nm_exp100ms.SSM' for wave_len in range(950, 1026, 25)]
-    MC_measurements = [ readInBlackCometMeasurement(measurement_file, data_dir = measurements_dir)  for measurement_file in MC_measurement_files ]
-    mono_wavelengths = list(range(425, 1026, 25))
-    mono_date_str = '20220317'
+    mono_date_str = '20220323'
     ref_lamp_date_str = '20220317'
+    dir_base = '/Users/sashabrownsberger/Documents/Harvard/physics/stubbs/'
+    measurements_dir = dir_base + 'MonochromatorCal/' + mono_date_str + '/'
+
+    #MC_measurement_files = ['BC_mono_' + str(wave_len) + 'nm_exp10000ms.SSM' for wave_len in range(425, 426, 25)] + ['BC_mono_' + str(wave_len) + 'nm_exp1000ms.SSM' for wave_len in range(450, 476, 25)] + ['BC_mono_' + str(wave_len) + 'nm_exp200ms.SSM' for wave_len in range(500, 551, 25)] + ['BC_mono_' + str(wave_len) + 'nm_exp100ms.SSM' for wave_len in range(575, 626, 25)] + ['BC_mono_' + str(wave_len) + 'nm_exp50ms.SSM' for wave_len in range(650, 676, 25)] + ['BC_mono_' + str(wave_len) + 'nm_exp20ms.SSM' for wave_len in range(700, 726, 25)] + ['BC_mono_' + str(wave_len) + 'nm_exp10ms.SSM' for wave_len in range(750, 926, 25)] + ['BC_mono_' + str(wave_len) + 'nm_exp100ms.SSM' for wave_len in range(950, 1026, 25)]
+    MC_measurement_files = ['BC_' + str(wave_len) + 'nm_10000ms.SSM' for wave_len in range(400, 450, 50)] + ['BC_' + str(wave_len) + 'nm_1000ms.SSM' for wave_len in range(450, 501, 50)] + ['BC_' + str(wave_len) + 'nm_500ms.SSM' for wave_len in range(550, 600, 50)] + ['BC_' + str(wave_len) + 'nm_100ms.SSM' for wave_len in range(600, 700, 50)] + ['BC_' + str(wave_len) + 'nm_10ms.SSM' for wave_len in range(700, 951, 50)] +  ['BC_' + str(wave_len) + 'nm_100ms.SSM' for wave_len in range(1000, 1051, 50)]
+    MC_measurements = [ readInBlackCometMeasurement(measurement_file, data_dir = measurements_dir)  for measurement_file in MC_measurement_files ]
+    #mono_wavelengths = list(range(425, 1026, 25))
+    mono_wavelengths = list(range(400, 1051, 50))
 
 
     wavelength_conv_fit_order = 2
 
-    dir_base = '/Users/sashabrownsberger/Documents/Harvard/physics/stubbs/'
-    measurements_dir = dir_base + 'MonochromatorCal/' + mono_date_str + '/'
     #Calibration lights include: [KR1, HG2, ]
     ref_lamp_str = 'KR1'
     ref_lamp_wavelengths = getRefLampWavelengths(ref_lamp_str)
@@ -104,7 +107,7 @@ if __name__ == "__main__":
     #  the middle of the fitted wavelength range.
     fit_central_wavelength_nm = 0
     wavelength_indeces = [ np.argmin(np.abs(np.array(MC_measurements[i][0]) - mono_wavelengths[i])) for i in range(len(MC_measurements)) ]
-    MC_fit_pix_width = 60
+    MC_fit_pix_width = 100
     fitted_xs_set = [[] for i in range(len(MC_measurements))]
     fitted_ys_set = [[] for i in range(len(MC_measurements))]
 
@@ -122,9 +125,9 @@ if __name__ == "__main__":
         fitted_ys_set[i] = fit_ys
         amp_guess = np.max(MC_measurement[1][max(wave_index - MC_fit_pix_width, 0):min(wave_index + MC_fit_pix_width, n_points )]) - np.median(MC_measurement[1][max(wave_index - MC_fit_pix_width, 0):min(wave_index + MC_fit_pix_width, n_points )])
         mu_guess = mono_wavelengths[i]
-        sig_guess = 4.0
+        sig_guess = 20.0
         floor_guess = np.median(MC_measurement[1][max(wave_index - MC_fit_pix_width, 0):min(wave_index + MC_fit_pix_width, n_points )])
-        init_guess = [amp_guess, mu_guess , sig_guess, floor_guess ]
+        init_guess = [amp_guess, fit_xs[np.argmax(fit_ys)] , sig_guess, floor_guess ]
         MC_fit = fitData(fit_xs, fit_ys, fit_guess =  init_guess, show_fit = 0, fit_funct = fit_funct_type )[0]
         MC_fits[i] = MC_fit
         fit_funct, fit_bounds = getFitFunct(fit_funct = fit_funct_type )
@@ -283,4 +286,4 @@ if __name__ == "__main__":
     print ('Monochromator wavelength (W_M) to true wavelength (W_T) fit funct (both in nm): W_T = (' + str(can.round_to_n(Mono_to_True_fit_params[0], 5)) + ')(W_M - ' + str(fit_central_wavelength_nm) + ')^2 + (' + str(can.round_to_n(Mono_to_True_fit_params[1], 5)) + ')(W_M - ' + str(fit_central_wavelength_nm) + ') + ' + str(can.round_to_n(Mono_to_True_fit_params[2], 5)) )
     print ('By that scale, the fit wavelengths for the reference lamp are: ')
     for ref_lamp_wave in ref_lamp_wavelengths:
-        print ('ref_lamp_wave ' + str(ref_lamp_wave) + ' =====> ' + str(can.round_to_n(true_fit_funct(ref_lamp_wave), 6)))
+        print ('Mono claimed: ' + str(ref_lamp_wave) + ' nm  =====> is actually: ' + str(can.round_to_n(true_fit_funct(ref_lamp_wave), 6)) + ' nm')
