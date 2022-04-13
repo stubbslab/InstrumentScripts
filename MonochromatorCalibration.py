@@ -82,7 +82,7 @@ if __name__ == "__main__":
         lamp, for example).
 
     Run from command line as:
-    $ python MonochromatorCalibration.py 
+    $ python MonochromatorCalibration.py
     """
     mono_date_str = '20220411'
     ref_lamp_date_str = '20220317'
@@ -90,10 +90,10 @@ if __name__ == "__main__":
     measurements_dir = dir_base + 'MonochromatorCal/' + mono_date_str + '/'
 
     #MC_measurement_files = ['BC_mono_' + str(wave_len) + 'nm_exp10000ms.SSM' for wave_len in range(425, 426, 25)] + ['BC_mono_' + str(wave_len) + 'nm_exp1000ms.SSM' for wave_len in range(450, 476, 25)] + ['BC_mono_' + str(wave_len) + 'nm_exp200ms.SSM' for wave_len in range(500, 551, 25)] + ['BC_mono_' + str(wave_len) + 'nm_exp100ms.SSM' for wave_len in range(575, 626, 25)] + ['BC_mono_' + str(wave_len) + 'nm_exp50ms.SSM' for wave_len in range(650, 676, 25)] + ['BC_mono_' + str(wave_len) + 'nm_exp20ms.SSM' for wave_len in range(700, 726, 25)] + ['BC_mono_' + str(wave_len) + 'nm_exp10ms.SSM' for wave_len in range(750, 926, 25)] + ['BC_mono_' + str(wave_len) + 'nm_exp100ms.SSM' for wave_len in range(950, 1026, 25)]
-    MC_measurement_files = ['mono_' + str(wave_len) + 'nm_10s.SSM' for wave_len in range(400, 450, 50)] + ['mono_' + str(wave_len) + 'nm_1s.SSM' for wave_len in range(450, 501, 50)] + ['mono_' + str(wave_len) + 'nm_100ms.SSM' for wave_len in range(550, 651, 50)] + ['mono_' + str(wave_len) + 'nm_10ms.SSM' for wave_len in range(700, 851, 50)] + ['mono_' + str(wave_len) + 'nm_100ms.SSM' for wave_len in range(900, 951, 50)] +  ['mono_' + str(wave_len) + 'nm_1000ms.SSM' for wave_len in range(1000, 1051, 50)]
+    MC_measurement_files = ['mono_' + str(wave_len) + 'nm_10s.SSM' for wave_len in range(450, 450, 50)] + ['mono_' + str(wave_len) + 'nm_1s.SSM' for wave_len in range(450, 501, 50)] + ['mono_' + str(wave_len) + 'nm_100ms.SSM' for wave_len in range(550, 651, 50)] + ['mono_' + str(wave_len) + 'nm_10ms.SSM' for wave_len in range(700, 851, 50)] + ['mono_' + str(wave_len) + 'nm_100ms.SSM' for wave_len in range(900, 951, 50)] +  ['mono_' + str(wave_len) + 'nm_1000ms.SSM' for wave_len in range(1000, 1051, 50)]
     MC_measurements = [ readInBlackCometMeasurement(measurement_file, data_dir = measurements_dir)  for measurement_file in MC_measurement_files ]
     #mono_wavelengths = list(range(425, 1026, 25))
-    mono_wavelengths = list(range(400, 1051, 50))
+    mono_wavelengths = list(range(450, 1051, 50))
 
 
     wavelength_conv_fit_order = 2
